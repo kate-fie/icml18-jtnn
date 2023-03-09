@@ -6,7 +6,7 @@ export PYTHONPATH=$PREFIX/icml18-jtnn
 Our ZINC dataset is in `icml18-jtnn/data/zinc` (copied from https://github.com/mkusner/grammarVAE). 
 We follow the same train/dev/test split as previous work. 
 
-## Deriving Vocabulary 
+## Deriving Vocabulary (outdated as of 9 March 2023)
 If you are running our code on a new dataset, you need to compute the vocabulary from your dataset.
 To perform tree decomposition over a set of molecules, run
 ```

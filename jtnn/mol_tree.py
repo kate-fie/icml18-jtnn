@@ -2,6 +2,8 @@ import rdkit
 import rdkit.Chem as Chem
 import copy
 from chemutils import get_clique_mol, tree_decomp, get_mol, get_smiles, set_atommap, enum_assemble, decode_stereo
+import argparse
+from rdkit.Chem import PandasTools
 
 def get_slots(smiles):
     mol = Chem.MolFromSmiles(smiles)
@@ -127,16 +129,39 @@ class MolTree(object):
             node.assemble()
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f', help='filetype, either sdf or txt', required=True)
+    parser.add_argument('-i', help='path of input file, either sdf or txt', required=True)
+    parser.add_argument('-o', help='output file path', required=True)
+    args = parser.parse_args()
+
     import sys
     lg = rdkit.RDLogger.logger() 
     lg.setLevel(rdkit.RDLogger.CRITICAL)
 
     cset = set()
-    for i,line in enumerate(sys.stdin):
-        smiles = line.split()[0]
-        mol = MolTree(smiles)
-        for c in mol.nodes:
-            cset.add(c.smiles)
-    for x in cset:
-        print x
+    if args.f == 'sdf':
+        print('Reading .sdf file...')
+        with open(args.i, 'rb') as file:
+            df = PandasTools.LoadSDF(file, smilesName='SMILES', molColName='Molecule', includeFingerprints=True)
+            for i, line in df.iterrows():
+                smiles = line['SMILES']
+                print(smiles)
+                mol = MolTree(smiles)
+                for c in mol.nodes:
+                    cset.add(c.smiles)
+            for x in cset:
+                print(x)
+    if args.f == 'txt':
+        print('Reading .txt of SMILES file...')
+        with open(args.i, 'rb') as file:
+            for i, line in enumerate(sys.stdin):
+                smiles = line.split()[0]
+                mol = MolTree(smiles)
+                for c in mol.nodes:
+                    cset.add(c.smiles)
+            for x in cset:
+                print(x)
+
+    print('Done!')
 
