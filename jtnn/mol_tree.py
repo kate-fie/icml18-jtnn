@@ -146,7 +146,6 @@ if __name__ == "__main__":
             df = PandasTools.LoadSDF(file, smilesName='SMILES', molColName='Molecule', includeFingerprints=True)
             for i, line in df.iterrows():
                 smiles = line['SMILES']
-                print(smiles)
                 mol = MolTree(smiles)
                 for c in mol.nodes:
                     cset.add(c.smiles)
@@ -163,5 +162,10 @@ if __name__ == "__main__":
             for x in cset:
                 print(x)
 
-    print('Done!')
+    file = open(args.o, 'w')
+    for smiles in cset:
+        file.write(smiles + "\n")
+    file.close()
+
+    print('Done! Wrote to{0}'.format(args.o))
 
