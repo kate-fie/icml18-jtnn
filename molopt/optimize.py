@@ -49,7 +49,7 @@ for smiles in data:
     mol = Chem.MolFromSmiles(smiles)
     score = Descriptors.MolLogP(mol) - sascorer.calculateScore(mol)
 
-    new_smiles,sim = model.optimize(smiles, sim_cutoff=sim_cutoff, lr=2, num_iter=80)
+    new_smiles, sim = model.optimize(smiles, sim_cutoff=sim_cutoff, lr=2, num_iter=80)
     new_mol = Chem.MolFromSmiles(new_smiles)
     new_score = Descriptors.MolLogP(new_mol) - sascorer.calculateScore(new_mol)
 

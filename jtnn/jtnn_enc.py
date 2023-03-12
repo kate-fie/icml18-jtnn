@@ -16,6 +16,7 @@ class JTNNEncoder(nn.Module):
         
         if embedding is None:
             self.embedding = nn.Embedding(self.vocab_size, hidden_size)
+            # nn.Embedding(size of dict of embeddings, size of each embedding vector)
         else:
             self.embedding = embedding
 

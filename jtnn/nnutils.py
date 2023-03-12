@@ -16,14 +16,26 @@ def index_select_ND(source, dim, index):
     return target.view(final_size)
 
 def GRU(x, h_nei, W_z, W_r, U_r, W_h):
+    '''
+    Parameters
+
+    :param x: input. Atom index?
+    :param h_nei:
+    :param W_z:
+    :param W_r:
+    :param U_r:
+    :param W_h:
+    :return:
+    '''
     hidden_size = x.size()[-1]
     sum_h = h_nei.sum(dim=1)
     z_input = torch.cat([x,sum_h], dim=1)
-    z = nn.Sigmoid()(W_z(z_input))
+    z = nn.Sigmoid()(W_z(z_input)) # update gate
+    # update gate: how much is the new state a copy of the old state?
 
     r_1 = W_r(x).view(-1,1,hidden_size)
     r_2 = U_r(h_nei)
-    r = nn.Sigmoid()(r_1 + r_2)
+    r = nn.Sigmoid()(r_1 + r_2) # reset gate
     
     gated_h = r * h_nei
     sum_gated_h = gated_h.sum(dim=1)

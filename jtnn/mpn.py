@@ -32,14 +32,14 @@ def bond_features(bond):
 
 def mol2graph(mol_batch):
     padding = torch.zeros(ATOM_FDIM + BOND_FDIM)
-    fatoms,fbonds = [],[padding] #Ensure bond is 1-indexed
-    in_bonds,all_bonds = [],[(-1,-1)] #Ensure bond is 1-indexed
+    fatoms,fbonds = [],[padding] # Ensure bond is 1-indexed
+    in_bonds,all_bonds = [],[(-1,-1)] # Ensure bond is 1-indexed
     scope = []
     total_atoms = 0
 
     for smiles in mol_batch:
         mol = get_mol(smiles)
-        #mol = Chem.MolFromSmiles(smiles)
+        # mol = Chem.MolFromSmiles(smiles)
         n_atoms = mol.GetNumAtoms()
         for atom in mol.GetAtoms():
             fatoms.append( atom_features(atom) )
@@ -90,6 +90,7 @@ class MPN(nn.Module):
         self.depth = depth
 
         self.W_i = nn.Linear(ATOM_FDIM + BOND_FDIM, hidden_size, bias=False)
+        # nn.Linear(size of input, size of output, learn an additive bias?)
         self.W_h = nn.Linear(hidden_size, hidden_size, bias=False)
         self.W_o = nn.Linear(ATOM_FDIM + hidden_size, hidden_size)
 

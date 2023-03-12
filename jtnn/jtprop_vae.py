@@ -195,17 +195,30 @@ class JTPropVAE(nn.Module):
         return self.decode(tree_vec, mol_vec, prob_decode)
 
     def optimize(self, smiles, sim_cutoff, lr=2.0, num_iter=20):
+        '''
+        Given a smiles, similarity cutoff, learning rate, and number of molecules ot generate,
+        return generated geneerated smiles which are similar.
+
+        Here I could, optimize latent space to produce molecules that are similar but have a higher score on
+        synthesizability.
+
+        :param smiles:
+        :param sim_cutoff:
+        :param lr:
+        :param num_iter:
+        :return:
+        '''
         mol_tree = MolTree(smiles)
         mol_tree.recover()
-        _,tree_vec,mol_vec = self.encode([mol_tree])
+        _, tree_vec, mol_vec = self.encode([mol_tree])
         
         mol = Chem.MolFromSmiles(smiles)
         fp1 = AllChem.GetMorganFingerprint(mol, 2)
         
         tree_mean = self.T_mean(tree_vec)
-        tree_log_var = -torch.abs(self.T_var(tree_vec)) #Following Mueller et al.
+        tree_log_var = -torch.abs(self.T_var(tree_vec)) # Following Mueller et al.
         mol_mean = self.G_mean(mol_vec)
-        mol_log_var = -torch.abs(self.G_var(mol_vec)) #Following Mueller et al.
+        mol_log_var = -torch.abs(self.G_var(mol_vec)) # Following Mueller et al.
         mean = torch.cat([tree_mean, mol_mean], dim=1)
         log_var = torch.cat([tree_log_var, mol_log_var], dim=1)
         cur_vec = create_var(mean.data, True)
@@ -218,7 +231,7 @@ class JTPropVAE(nn.Module):
             cur_vec = create_var(cur_vec, True)
             visited.append(cur_vec)
         
-        l,r = 0, num_iter - 1
+        l, r = 0, num_iter - 1
         while l < r - 1:
             mid = (l + r) / 2
             new_vec = visited[mid]

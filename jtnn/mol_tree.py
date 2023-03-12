@@ -34,7 +34,7 @@ class MolTreeNode(object):
         self.smiles = smiles
         self.mol = get_mol(self.smiles)
 
-        self.clique = [x for x in clique] #copy
+        self.clique = [x for x in clique] # copy
         self.neighbors = []
         
     def add_neighbor(self, nei_node):
@@ -49,10 +49,10 @@ class MolTreeNode(object):
 
         for nei_node in self.neighbors:
             clique.extend(nei_node.clique)
-            if nei_node.is_leaf: #Leaf node, no need to mark 
+            if nei_node.is_leaf: # Leaf node, no need to mark
                 continue
             for cidx in nei_node.clique:
-                #allow singleton node override the atom mapping
+                # allow singleton node override the atom mapping
                 if cidx not in self.clique or len(nei_node.clique) == 1:
                     atom = original_mol.GetAtomWithIdx(cidx)
                     atom.SetAtomMapNum(nei_node.nid)
@@ -88,7 +88,7 @@ class MolTree(object):
         self.smiles = smiles
         self.mol = get_mol(smiles)
 
-        #Stereo Generation
+        # Stereo Generation
         mol = Chem.MolFromSmiles(smiles)
         self.smiles3D = Chem.MolToSmiles(mol, isomericSmiles=True)
         self.smiles2D = Chem.MolToSmiles(mol)
@@ -167,5 +167,5 @@ if __name__ == "__main__":
         file.write(smiles + "\n")
     file.close()
 
-    print('Done! Wrote to{0}'.format(args.o))
+    print('Done! Wrote to {0}'.format(args.o))
 
